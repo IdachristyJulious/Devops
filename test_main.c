@@ -1,5 +1,4 @@
 #include <assert.h>
-#include "main.c"
 
 void test_add() {
     assert(add(2, 3) == 5);
