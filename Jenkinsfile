@@ -2,8 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DEPLOY_DIR = '/var/www/myapp'
-        APP_ENTRY = 'myapp.py'
+        DEPLOY_DIR = '/var/www/pythonapp'         // Local deploy path
+        VENV_DIR = 'venv'                         // Virtual environment name
+        ENTRY_POINT = 'app/main.py'               // Your main Python file
+        LOG_FILE = 'app.log'                      // Log file for app output
     }
 
     stages {
@@ -13,30 +15,36 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Setup Python Environment') {
             steps {
-                echo 'Building the application...'
-                // Example: Compile Java, install Python deps, etc.
-                // sh 'javac MyApp.java' or 'pip install -r requirements.txt'
+                echo 'Setting up virtual environment...'
+                sh """
+                    python3 -m venv $VENV_DIR
+                    source $VENV_DIR/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                """
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                echo 'Running tests...'
-                // Optional: run test scripts or unit tests
-                // sh 'python -m unittest tests/test_app.py'
+                echo 'Running unit tests...'
+                sh """
+                    source $VENV_DIR/bin/activate
+                    python -m unittest discover tests
+                """
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Application') {
             steps {
-                echo 'Deploying application...'
+                echo 'Deploying application locally...'
                 sh """
                     mkdir -p $DEPLOY_DIR
                     cp -r * $DEPLOY_DIR/
-                    pkill -f $APP_ENTRY || true
-                    nohup python3 $DEPLOY_DIR/$APP_ENTRY > $DEPLOY_DIR/output.log 2>&1 &
+                    pkill -f $ENTRY_POINT || true
+                    nohup python3 $DEPLOY_DIR/$ENTRY_POINT > $DEPLOY_DIR/$LOG_FILE 2>&1 &
                 """
             }
         }
@@ -44,11 +52,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment successful!'
+            echo '✅ Python application deployed successfully.'
         }
         failure {
-            echo '❌ Deployment failed.'
+            echo '❌ Deployment failed. Check console logs.'
         }
     }
 }
-
