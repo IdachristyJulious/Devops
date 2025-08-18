@@ -10,10 +10,12 @@ pipeline {
 
     stages {
         stage('Clone Repository') {
-            steps {
-                git url: 'https://github.com/your-username/your-repo.git'
-            }
-        }
+    steps {
+        git branch: 'main',
+            url: 'https://github.com/IdachristyJulious/Devops.git',
+            credentialsId: 'github-credentials'
+    }
+}
 
         stage('Setup Python Environment') {
             steps {
