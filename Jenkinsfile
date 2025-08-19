@@ -27,15 +27,6 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                bat """
-                    call %VENV_DIR%\\Scripts\\activate
-                    pytest tests/
-                """
-            }
-        }
-
-        stage('Run Tests') {
     steps {
         bat """
             call %VENV_DIR%\\Scripts\\activate
