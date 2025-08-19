@@ -9,7 +9,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'your-github-credentials-id', url: 'https://github.com/IdachristyJulious/Devops.git'
+                git credentialsId: c6628c06-6ac9-4dc7-863c-32c39834d887, url: 'https://github.com/IdachristyJulious/Devops.git'
             }
         }
 
