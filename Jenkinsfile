@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python3'  // Make sure Python is installed and configured in Jenkins Global Tool Configuration
-    }
-
     environment {
         VENV_DIR = 'venv'
     }
@@ -42,7 +38,7 @@ pipeline {
                 bat """
                     call %VENV_DIR%\\Scripts\\activate
                     echo Deploying your Python app...
-                    REM Add deployment commands here
+                    REM Add deployment steps here (e.g., copying files or running scripts)
                 """
             }
         }
@@ -53,8 +49,7 @@ pipeline {
             echo '✅ Build and Deployment completed successfully.'
         }
         failure {
-            echo '❌ Deployment failed. Check console logs.'
+            echo '❌ Deployment failed. Check logs.'
         }
     }
 }
-
