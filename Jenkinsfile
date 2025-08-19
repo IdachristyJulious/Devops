@@ -1,28 +1,27 @@
 pipeline {
     agent any
 
+    tools {
+        python 'Python3'  // Make sure Python is installed and configured in Jenkins Global Tool Configuration
+    }
+
     environment {
-        DEPLOY_DIR = '/var/www/pythonapp'         // Local deploy path
-        VENV_DIR = 'venv'                         // Virtual environment name
-        ENTRY_POINT = 'app/main.py'               // Your main Python file
-        LOG_FILE = 'app.log'                      // Log file for app output
+        VENV_DIR = 'venv'
     }
 
     stages {
+
         stage('Clone Repository') {
-    steps {
-        git branch: 'main',
-            url: 'https://github.com/IdachristyJulious/Devops.git',
-            credentialsId: 'github-credentials'
-    }
-}
+            steps {
+                git credentialsId: 'your-github-credentials-id', url: 'https://github.com/IdachristyJulious/Devops.git'
+            }
+        }
 
         stage('Setup Python Environment') {
             steps {
-                echo 'Setting up virtual environment...'
-                sh """
-                    python3 -m venv $VENV_DIR
-                    source $VENV_DIR/bin/activate
+                bat """
+                    python -m venv %VENV_DIR%
+                    call %VENV_DIR%\\Scripts\\activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 """
@@ -31,22 +30,19 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo 'Running unit tests...'
-                sh """
-                    source $VENV_DIR/bin/activate
-                    python -m unittest discover tests
+                bat """
+                    call %VENV_DIR%\\Scripts\\activate
+                    pytest tests/
                 """
             }
         }
 
         stage('Deploy Application') {
             steps {
-                echo 'Deploying application locally...'
-                sh """
-                    mkdir -p $DEPLOY_DIR
-                    cp -r * $DEPLOY_DIR/
-                    pkill -f $ENTRY_POINT || true
-                    nohup python3 $DEPLOY_DIR/$ENTRY_POINT > $DEPLOY_DIR/$LOG_FILE 2>&1 &
+                bat """
+                    call %VENV_DIR%\\Scripts\\activate
+                    echo Deploying your Python app...
+                    REM Add deployment commands here
                 """
             }
         }
@@ -54,10 +50,11 @@ pipeline {
 
     post {
         success {
-            echo '✅ Python application deployed successfully.'
+            echo '✅ Build and Deployment completed successfully.'
         }
         failure {
             echo '❌ Deployment failed. Check console logs.'
         }
     }
 }
+
