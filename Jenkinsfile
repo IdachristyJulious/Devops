@@ -35,15 +35,19 @@ pipeline {
             }
         }
 
-        stage('Deploy Application') {
-            steps {
-                bat """
-                    call %VENV_DIR%\\Scripts\\activate
-                    echo Deploying your Python app...
-                    REM You can copy files or run scripts here
-                """
-            }
-        }
+        stage('Run Tests') {
+    steps {
+        bat """
+            call %VENV_DIR%\\Scripts\\activate
+            if exist tests (
+                echo Running tests...
+                pytest tests/
+            ) else (
+                echo No tests directory found. Skipping tests.
+            )
+        """
+    }
+}
     }
 
     post {
