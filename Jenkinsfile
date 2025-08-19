@@ -2,14 +2,16 @@ pipeline {
     agent any
 
     environment {
-        VENV_DIR = 'venv'
+        VENV_DIR = 'venv'  // Virtual environment folder
     }
 
     stages {
 
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'c6628c06-6ac9-4dc7-863c-32c39834d887', url: 'https://github.com/IdachristyJulious/Devops.git'
+                git branch: 'main',  // Change this to your actual branch (main/master)
+                    credentialsId: 'c6628c06-6ac9-4dc7-863c-32c39834d887',
+                    url: 'https://github.com/IdachristyJulious/Devops.git'
             }
         }
 
@@ -38,7 +40,7 @@ pipeline {
                 bat """
                     call %VENV_DIR%\\Scripts\\activate
                     echo Deploying your Python app...
-                    REM Add deployment steps here (e.g., copying files or running scripts)
+                    REM You can copy files or run scripts here
                 """
             }
         }
@@ -53,3 +55,4 @@ pipeline {
         }
     }
 }
+
